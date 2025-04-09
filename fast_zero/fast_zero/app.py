@@ -21,6 +21,5 @@ def exercicio_aula_02():
             <title>Nosso olá mundo!</title>
         </head>
         <body>
-            <h1>Olá Mundo!</h1>        
-        </body>
+            <h1>Olá Mundo!</h1></body>
     </html>"""
