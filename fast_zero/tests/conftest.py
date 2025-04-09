@@ -26,15 +26,20 @@ def session():
 
     table_registry.metadata.drop_all(engine)
 
+
 @pytest.fixture
-def mock_db_time(*, model, time=datetime(2024, 1, 1)):
+def mock_db_time():
+    @contextmanager
+    def mock_time(*, model, time=datetime(2024, 1, 1)):
+        def fake_time_hook(mapper, connection, target):
+            if hasattr(target, 'created_at'):
+                target.created_at = time
+            if hasattr(target, 'updated_at'):
+                target.updated_at = time
 
-    def fake_time_hook(mapper, connection, target):
-        if hasattr(target, 'created_at'):
-            target.created_at = time
-    
-    event.listen(model, 'before_insert', fake_time_hook)
+        event.listen(model, 'before_insert', fake_time_hook)
 
-    yield time
+        yield time
 
-    event.remove(model, 'before_insert', fake_time_hook)
+        event.remove(model, 'before_insert', fake_time_hook)
+    return mock_time
